@@ -1,0 +1,131 @@
+body{
+    background-color: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1{
+    color: white;
+}
+
+body h2{
+    color: white;
+}
+
+.container-loading{
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 2;
+    color: white;
+}
+
+.container-data{
+    position: relative;
+    width: 100vw;
+    display: grid;
+    grid-template-columns: auto auto;
+}
+
+.box-credentials{
+    display: flex;
+    flex-direction: column;
+    background-color: #68676C;
+    margin: 15px;
+    border-radius: 10px;
+    color: white;
+}
+
+.box-credentials .container-text{
+    display: flex;
+    align-items: center;
+    width: 70%;
+    justify-content: space-between;
+}
+
+.container-cpm{
+    display: grid;
+    grid-template-columns: auto auto;
+
+}
+
+.box-data{
+    display: flex;
+    flex-direction: column;
+    background-color: #68676C;
+    margin: 15px;
+    border-radius: 10px;
+    align-items: center;
+    color: white;
+}
+
+.loader {
+    border: 5px solid #f3f3f3; /* Light grey */
+    border-top: 5px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 2s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+
+  .container-gps{
+    position: relative;
+    width: 100vw;
+    display: grid;
+    grid-template-columns: auto auto;
+  }
+
+  .box-gps{
+    position: relative;
+    display: grid;
+    grid-template-columns: auto auto;
+
+}
+
+#map{
+    border-radius: 10px;
+}
+
+.marker {
+    background-image: url('/Images/sensor.png');
+    background-size: cover;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .mapboxgl-popup {
+    max-width: 200px;
+  }
+  
+  .mapboxgl-popup-content {
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+  }
+.box-gps .container-text{
+    display: flex;
+    align-items: center;
+    width: 70%;
+    justify-content: space-between;
+}
+
+
+
+  .footer{
+      display: flex;
+      color: white;
+  }

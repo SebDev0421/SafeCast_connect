@@ -1,0 +1,217 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Safecast datalogger</title>
+        <link rel="stylesheet"  type="text/css" href="css/styles.css">
+        <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet' />
+
+    </head>
+    <body>
+        <script src="/socket.io/socket.io.js"></script>
+        <h1>Safe cast datalogger</h1>
+
+        <div class="container-loading">
+            <div class="loader"></div>
+            <h3>Waiting for data</h3>
+        </div>
+
+
+        <div class="container-data">
+
+            <div class="box-credentials">
+                <div class="container-text">
+                    <h3>Model  </h3>
+                    <p class="model">Nano</p>
+                </div>
+                <div class="container-text">
+                    <h3>Device ID  </h3>
+                    <p class="id-device">N/A</p>
+                </div>
+                <div class="container-text">
+                    <h3>Date  </h3>
+                    <p class="date"></p>
+                </div>
+
+                <div class="container-text">
+                    <h3>Server  </h3>
+                    <p class="server"> Latam </p>
+                </div>
+
+                <div class="container-text">
+                    <h3>User  </h3>
+                    <p class="server"> Alejandro Contreras </p>
+                </div>
+
+            </div>
+            <div>
+                <div class="container-cpm">
+                    <div class="box-data">
+                        <h2>CPM</h2>
+                        <h1 class="cpm">0</h1>
+                    </div>
+                    <div class="box-data">
+                        <h2>CPF(Pulses given in the last 5 seconds)</h2>
+                        <h1 class="cpf">0</h1>
+                    </div>
+                    <div class="box-data">
+                        <h2>Radiation total count</h2>
+                        <h1 class="rtc">0</h1>
+                    </div>
+                    <div class="box-data">
+                        <h2>Altitude</h2>
+                        <h1 class="altitude">0</h1>
+                    </div>
+                </div>
+    
+                
+            </div>
+        </div>
+
+        <h2>GPS data</h2>
+        <div class="container-gps">
+            <div id='map'></div>
+            <script>
+
+const socket = io('http://localhost:3000')
+            socket.on('connection')
+
+            var lat = 0;
+            var lng = 0;
+
+            
+
+
+            
+
+            socket.on('safeCast:data',(data)=>{
+
+                const trace = data.value
+                
+                const split_trace = trace.split(',')
+                console.log(data.value)
+                if(data){
+                    document.getElementsByClassName('container-loading')[0].style.visibility = 'hidden';
+                }
+
+                const model = split_trace[0]
+
+                switch(model){
+                    case '$BMRDD':
+                        document.querySelector('.model').innerHTML =  'Mini'
+                        break;
+                    case '$BNRDD':
+                        document.querySelector('.model').innerHTML =  'Nano'
+                        break;
+                    case '$BNXRDD':
+                        document.querySelector('.model').innerHTML =  'NX'
+                        break;                    
+                }
+
+                
+
+                let lat = parseFloat(split_trace[7])*0.01
+                let lng = parseFloat(split_trace[9])*0.01
+
+                if(split_trace[8]=='S'){
+                    lat = -lat;
+                }
+                if(split_trace[10]=='W'){
+                    
+                    lng = -lng;
+                }
+
+                mapboxgl.accessToken = 'pk.eyJ1Ijoic2ViZGV2MDQyMSIsImEiOiJjazRteWRwMmoyeDB6M2xtd3RxdHJnOHd5In0.CqRSrODKioTX-5dVvPug_w';
+            var map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v11',
+                center:[lng,lat],
+                zoom: 5
+            });
+
+                const geojson = {
+                type: 'FeatureCollection',
+                features: [
+                    {
+                        type:'Feature',
+                        geometry:{
+                            type:'point',
+                            coordinates:[lng,lat]
+                        },
+                        properties: {
+                            title: 'Mapbox',
+                            description: 'Device 3000'
+                        }
+
+                    }
+                ]
+            }
+
+            document.querySelector('.cpm').innerHTML = split_trace[3]+' CPM'
+            document.querySelector('.altitude').innerHTML = split_trace[11]+' m sobre nivel de mar'
+            document.querySelector('.date').innerHTML = split_trace[2]
+            document.querySelector('.id-device').innerHTML = split_trace[1]
+            document.querySelector('.lat').innerHTML = lat
+            document.querySelector('.lng').innerHTML = lng
+            document.querySelector('.rtc').innerHTML = split_trace[5]
+            document.querySelector('.sat').innerHTML = split_trace[13]
+            document.querySelector('.HDOP').innerHTML = split_trace[14]
+            document.querySelector('.cpf').innerHTML = split_trace[4]
+
+            for (const feature of geojson.features) {
+                // create a HTML element for each feature
+                const el = document.createElement('div');
+                el.className = 'marker';
+                // make a marker for each feature and add to the map
+                new mapboxgl.Marker(el).setLngLat(feature.geometry.coordinates).addTo(map);
+                    
+            }
+
+
+            new mapboxgl.Marker(el)
+            .setLngLat(feature.geometry.coordinates)
+            .setPopup(
+                new mapboxgl.Popup({ offset: 25 }) // add popups
+                .setHTML(
+                    `<h3>${feature.properties.title}</h3><p>${feature.properties.description}</p>`
+                    )
+                    )
+                .addTo(map);
+
+                
+
+
+                
+            })
+
+
+            
+
+            
+            </script>
+            <div class="box-gps">
+                <div class="box-data">
+                    <h2>Lat</h2>
+                    <h1 class="lat">0.0</h1>
+                </div>
+                <div class="box-data">
+                    <h2>Lng</h2>
+                    <h1 class="lng">0.0</h1>
+                </div>
+                <div class="box-data">
+                    <h2>Satellites</h2>
+                    <h1 class="sat">0</h1>
+                </div>
+                <div class="box-data">
+                    <h2>HDOP</h2>
+                    <h1 class="HDOP">0</h1>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <p>Powered by Fuerza aerea colombiana</p>
+            <img src="/Images/fac.png" alt="fac" width="130" height="100"/>
+        </div>
+    </body>
+
+</html>
